@@ -16,19 +16,12 @@ namespace Timer
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void startStopTimerButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void lapSplitButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
     }
 }
