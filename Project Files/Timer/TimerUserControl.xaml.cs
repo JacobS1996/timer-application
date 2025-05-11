@@ -22,6 +22,8 @@ namespace Timer
     /// </summary>
     public partial class TimerUserControl : UserControl, INotifyPropertyChanged
     {
+        private BindingList<string> LapSplits { get; set; } = new BindingList<string>();
+
         private static System.Timers.Timer timer = new System.Timers.Timer(10);
 
 
@@ -29,9 +31,9 @@ namespace Timer
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string? _timerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
+        private string _timerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
 
-        public string? TimerValue
+        public string TimerValue
         {
             get 
             {
@@ -50,6 +52,8 @@ namespace Timer
         {
             InitializeComponent();
             timerTextBlock.DataContext = this;
+            splitsListBox.DataContext = LapSplits;
+            splitsListBox.ItemsSource = LapSplits;
             
             
           
@@ -58,14 +62,11 @@ namespace Timer
 
 
         }
-        private void startStopTimerButton_Click(object sender, RoutedEventArgs e)
-        {
-            RunTimer();
-        }
+  
 
         private void lapSplitButton_Click(object sender, RoutedEventArgs e)
         {
-
+            LapSplits.Add(TimerValue);
         }
 
         private void RunTimer()
@@ -75,10 +76,15 @@ namespace Timer
             timer.Enabled = true;
         }
 
+        private void StopTimer()
+        {
+            timer.Stop();
+        }
+
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             timerValueDateTime = timerValueDateTime.AddMilliseconds(10);
-            TimerValue = timerValueDateTime.ToString("HH:mm:ss:ff");
+            TimerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
            
         }
 
@@ -87,9 +93,19 @@ namespace Timer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-    
+        private void stopTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+            StopTimer();
+            timer.Dispose();
+            timer = new System.Timers.Timer(10);
+            startTimerButton.IsEnabled = true;
+        }
 
+        private void startTimerButton_Click(object sender, RoutedEventArgs e)
+        {
+            RunTimer();
+            startTimerButton.IsEnabled = false;
 
-
+        }
     }
 }
