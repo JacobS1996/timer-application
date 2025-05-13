@@ -54,6 +54,7 @@ namespace Timer
             timerTextBlock.DataContext = this;
             splitsListBox.DataContext = LapSplits;
             splitsListBox.ItemsSource = LapSplits;
+            resetButton.IsEnabled = false;
             
             
           
@@ -74,6 +75,7 @@ namespace Timer
             timer.Elapsed += Timer_Elapsed;
             timer.AutoReset = true;
             timer.Enabled = true;
+            resetButton.IsEnabled = false;
         }
 
         private void StopTimer()
@@ -99,6 +101,7 @@ namespace Timer
             timer.Dispose();
             timer = new System.Timers.Timer(10);
             startTimerButton.IsEnabled = true;
+            resetButton.IsEnabled = true;
         }
 
         private void startTimerButton_Click(object sender, RoutedEventArgs e)
@@ -106,6 +109,13 @@ namespace Timer
             RunTimer();
             startTimerButton.IsEnabled = false;
 
+        }
+
+        private void resetButton_Click(object sender, RoutedEventArgs e)
+        {
+            timerValueDateTime = DateTime.MinValue;
+            TimerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
+            LapSplits.Clear();
         }
     }
 }
