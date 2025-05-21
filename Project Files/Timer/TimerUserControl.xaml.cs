@@ -22,17 +22,15 @@ namespace Timer
     /// </summary>
     public partial class TimerUserControl : UserControl, INotifyPropertyChanged
     {
-        private BindingList<string> LapSplits { get; set; } = new BindingList<string>();
-
-        private static System.Timers.Timer timer = new System.Timers.Timer(10);
-
-
-        private static DateTime timerValueDateTime = DateTime.MinValue;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private string _timerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
+        private static System.Timers.Timer timer = new System.Timers.Timer(10);
 
+        private static DateTime timerValueDateTime = DateTime.MinValue;
+        private BindingList<string> LapSplits { get; set; } = new BindingList<string>();
+
+        private string _timerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
         public string TimerValue
         {
             get 
@@ -55,19 +53,19 @@ namespace Timer
             splitsListBox.DataContext = LapSplits;
             splitsListBox.ItemsSource = LapSplits;
             resetButton.IsEnabled = false;
-            
-            
-          
-            
-
-
-
         }
-  
 
-        private void lapSplitButton_Click(object sender, RoutedEventArgs e)
+
+        private void OnPropertyChanged([CallerMemberName] string name = "TimerValue")
         {
-            LapSplits.Add(TimerValue);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
+        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            timerValueDateTime = timerValueDateTime.AddMilliseconds(10);
+            TimerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
+
         }
 
         private void RunTimer()
@@ -83,16 +81,17 @@ namespace Timer
             timer.Stop();
         }
 
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+       
+        private void startTimerButton_Click(object sender, RoutedEventArgs e)
         {
-            timerValueDateTime = timerValueDateTime.AddMilliseconds(10);
-            TimerValue = timerValueDateTime.ToString("HH:mm:ss.ff");
-           
+            RunTimer();
+            startTimerButton.IsEnabled = false;
+
         }
 
-        private void OnPropertyChanged([CallerMemberName] string name = "TimerValue")
+        private void lapSplitButton_Click(object sender, RoutedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            LapSplits.Add(TimerValue);
         }
 
         private void stopTimerButton_Click(object sender, RoutedEventArgs e)
@@ -102,13 +101,6 @@ namespace Timer
             timer = new System.Timers.Timer(10);
             startTimerButton.IsEnabled = true;
             resetButton.IsEnabled = true;
-        }
-
-        private void startTimerButton_Click(object sender, RoutedEventArgs e)
-        {
-            RunTimer();
-            startTimerButton.IsEnabled = false;
-
         }
 
         private void resetButton_Click(object sender, RoutedEventArgs e)
